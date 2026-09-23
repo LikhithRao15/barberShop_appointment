@@ -80,74 +80,150 @@ Barber_booking/
 
 ---
 
-## 🚀 Quickstart & Installation
+## 🚀 Step-by-Step Setup Instructions (After Cloning)
 
-### 1. Clone the Repository
+Follow these instructions to get the project running locally:
+
+### 1. Prerequisites
+Ensure you have the following installed on your machine:
+- **Python 3.12+** (`python3 --version` or `python --version`)
+- **PostgreSQL 16+** (or **Docker**)
+- **Git**
+
+---
+
+### 2. Clone Repository & Enter Directory
 ```bash
 git clone https://github.com/LikhithRao15/barberShop_appointment.git
 cd barberShop_appointment/backend
 ```
 
-### 2. Set Up Virtual Environment & Dependencies
+---
+
+### 3. Create & Activate a Virtual Environment
+
+- **macOS / Linux**:
+  ```bash
+  python3 -m venv .venv
+  source .venv/bin/activate
+  ```
+
+- **Windows (PowerShell)**:
+  ```powershell
+  python -m venv .venv
+  .venv\Scripts\Activate.ps1
+  ```
+
+- **Windows (Command Prompt)**:
+  ```cmd
+  python -m venv .venv
+  .venv\Scripts\activate.bat
+  ```
+
+---
+
+### 4. Install Dependencies
 ```bash
-python3 -m venv .venv
-source .venv/bin/activate
+pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-### 3. Configure Environment Variables
-Copy `.env.example` to `.env` and set your PostgreSQL credentials:
+---
+
+### 5. Start the PostgreSQL Database
+
+#### Option A: Using Docker (Recommended)
+Run PostgreSQL in a container with a single command:
+```bash
+docker run -d \
+  --name barber_postgres \
+  -e POSTGRES_USER=postgres \
+  -e POSTGRES_PASSWORD=postgres \
+  -e POSTGRES_DB=barber_booking \
+  -p 5432:5432 \
+  postgres:16-alpine
+```
+
+#### Option B: Using Local PostgreSQL (psql)
+```bash
+psql -U postgres -c "CREATE DATABASE barber_booking;"
+```
+
+---
+
+### 6. Configure Environment Variables (`.env`)
+
+Copy the example configuration file to `.env`:
 ```bash
 cp .env.example .env
 ```
-Example `.env`:
+
+Verify your `.env` settings (update username/password if using custom credentials):
 ```env
 PROJECT_NAME="Barber Shop Appointment & Visit Management System"
 API_V1_PREFIX="/api/v1"
-DATABASE_URL="postgresql://username:password@localhost:5432/barber_booking"
+DATABASE_URL="postgresql://postgres:postgres@localhost:5432/barber_booking"
 SECRET_KEY="your-super-secret-jwt-key"
 ACCESS_TOKEN_EXPIRE_MINUTES=1440
+
+# Default Seeded Admin Credentials
 ADMIN_USERNAME="admin"
 ADMIN_EMAIL="admin@barberbooking.com"
 ADMIN_PASSWORD="Admin@123456"
+
+# Business Policy Invariants
+CANCELLATION_MINUTES_BEFORE=60
+NO_SHOW_GRACE_PERIOD_MINUTES=10
 ```
 
-### 4. Run Database Migrations
+---
+
+### 7. Run Database Migrations
+Apply all versioned Alembic migrations to set up the database tables:
 ```bash
 alembic upgrade head
 ```
 
-### 5. Start the Development Server
-```bash
-uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
-```
-
 ---
 
-## 📖 Interactive Documentation
-
-Once the server is running, explore and test the API directly via:
-- **Swagger UI**: [http://localhost:8000/docs](http://localhost:8000/docs)
-- **ReDoc**: [http://localhost:8000/redoc](http://localhost:8000/redoc)
-
-### Default Administrator Account
-- **Username**: `admin`
-- **Password**: `Admin@123456`
-
----
-
-## 🧪 Running Automated Tests
-
-Run the full end-to-end test suite (37 tests covering all invariants, concurrency, and RBAC):
+### 8. Run Automated Test Suite
+Verify that all 37 unit, concurrency, and integration tests pass:
 ```bash
 pytest -v
 ```
 
 ---
 
-## 📚 Detailed Documentation Links
+### 9. Start the Development Server
+Launch the FastAPI server with live reload:
+```bash
+uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+```
 
-- 📘 **[Manual Testing Guide (backend/MANUAL_TESTING_GUIDE.md)](backend/MANUAL_TESTING_GUIDE.md)**: Interactive step-by-step instructions for testing every endpoint and workflow in Swagger UI.
+The server will be available at:
+👉 **[http://localhost:8000](http://localhost:8000)**
+
+---
+
+## 📖 Interactive API Documentation
+
+Once the server is running, you can test every endpoint directly in your browser:
+- **Swagger UI**: [http://localhost:8000/docs](http://localhost:8000/docs)
+- **ReDoc**: [http://localhost:8000/redoc](http://localhost:8000/redoc)
+
+### How to Log In via Swagger UI:
+1. Open [http://localhost:8000/docs](http://localhost:8000/docs).
+2. Click the green **Authorize 🔓** button at the top right.
+3. Enter:
+   - **Username**: `admin`
+   - **Password**: `Admin@123456`
+4. Click **Authorize** $\rightarrow$ **Close**. All subsequent requests in Swagger UI will now be authenticated!
+
+---
+
+## 📚 Detailed Guides & References
+
+- 📘 **[Manual Testing Guide (backend/MANUAL_TESTING_GUIDE.md)](backend/MANUAL_TESTING_GUIDE.md)**: Interactive step-by-step instructions for testing every feature and edge case.
 - 📐 **[How the System Works (backend/HOW_THE_SYSTEM_WORKS.md)](backend/HOW_THE_SYSTEM_WORKS.md)**: Complete guide with Mermaid sequence diagrams, state machines, ER diagrams, and user journeys.
 - ⚙️ **[Backend Technical Manual (backend/README.md)](backend/README.md)**: Detailed API specification and architecture guidelines.
 
